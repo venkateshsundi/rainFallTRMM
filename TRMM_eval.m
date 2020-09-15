@@ -46,10 +46,10 @@ Rain_trmm=A2';
 %% selecting specific region
 % select latitudes in between 6.125 to 39.125 in increments of 0.25
 % select longitudes in between 66.125 to 100.125 in increments of 0.25
-des_lowlat=10;
-des_uplat=12;
-des_lowlon=77;
-des_uplon=79;
+des_lowlat=26;
+des_uplat=28;
+des_lowlon=72;
+des_uplon=74;
 ind5_TRMM=find(lat1_TRMM>des_lowlat,1,'first');
 ind6_TRMM=find(lat1_TRMM>des_uplat,1,'first');
 latdes_TRMM=lat1_TRMM(ind5_TRMM:ind6_TRMM,1);

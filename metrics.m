@@ -1,18 +1,29 @@
-function [ Bias, RMSE, CC ] = metrics( product,gauge )
-[m,n,p] = size(gauge);
-for d=150:300
-    d(1,d) = reshape(,[1,m*n])
-    d(1,d) = reshape(,[1,m*n])
-    for i=1:m
-        for j=1:n
-            
-        end
+function [ avg_bias, avg_RMSE, avg_CC ] = metrics( product,gauge )
+
+    [m,n,o] = size(product);
+    for d=1:o
+        p = reshape(product(:,:,d),[1,m*n]);
+        g = reshape(gauge(:,:,d),[1,m*n]);
+        bias(d) = sum(p-g)/150;
+        RMSE(d) = sum((p-g).^2)/150;  
+        avg_p(d) = sum(p)/(m*n);
+        avg_g(d) = sum(g)/(m*n);    
     end
-end
-avg_p = sum(product)/n;
-avg_g = sum(gauge)/n;
-Bias = sum(product-gauge)/n;
-RMSE = sqrt(sum((product-gauge).^2)/n);
-CC   =sum((product-avg_p).*(gauge-avg_p))/sqrt((sum((product-avg_p).^2))*(sqrt(sum(((gauge-avg_g).^2)))));
+    for j=1:o
+        p = reshape(product(:,:,j),[1,m*n]);
+        g = reshape(gauge(:,:,j),[1,m*n]);
+        n1 = p-avg_p(j);
+        n2 = g-avg_g(j);
+        num = n1.*n2;
+        nu =sum(num);
+        d1 = sqrt(sum(n1.^2));
+        d2 = sqrt(sum(n2.^2));
+        den =d1*d2;
+        CC(j) = nu/den;
+    end
+    
+    avg_RMSE = sum(RMSE)/o;
+    avg_CC   = sum(CC)/o;   
+    avg_bias = sum(bias)/o;
 end
 
