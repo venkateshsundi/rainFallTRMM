@@ -1,29 +1,32 @@
-function [ avg_bias, avg_RMSE, avg_CC ] = metrics( product,gauge )
+function [ avg_bias, avg_RMSE, avg_CC ] = metrics( satellite,gauge )
 
-    [m,n,o] = size(product);
-    for d=1:o
-        p = reshape(product(:,:,d),[1,m*n]);
+   
+[m,n,pa] = size(satellite);
+    for d=1:pa
+        p = reshape(satellite(:,:,d),[1,m*n]);
         g = reshape(gauge(:,:,d),[1,m*n]);
-        bias(d) = sum(p-g)/150;
-        RMSE(d) = sum((p-g).^2)/150;  
+        bias(d) = sum(p-g)/(m*n);
+        RMSE(d) = sqrt(sum((p-g).^2)/(m*n));  
         avg_p(d) = sum(p)/(m*n);
         avg_g(d) = sum(g)/(m*n);    
     end
-    for j=1:o
-        p = reshape(product(:,:,j),[1,m*n]);
+    for j=1:pa
+        p = reshape(satellite(:,:,j),[1,m*n]);
         g = reshape(gauge(:,:,j),[1,m*n]);
-        n1 = p-avg_p(j);
-        n2 = g-avg_g(j);
-        num = n1.*n2;
-        nu =sum(num);
-        d1 = sqrt(sum(n1.^2));
-        d2 = sqrt(sum(n2.^2));
-        den =d1*d2;
-        CC(j) = nu/den;
+        p = sum(p);
+        g = sum(g);
+        sp = sum(p.^2);
+        sg = sum(g.^2);
+        spg = sum(p.*g);
+        if (((81*sp-p^2)*(81*sg-g^2)) == 0)
+            CC(j) = 0;
+        else
+            CC(j) = (81*spg-p*g)/sqrt((81*sp-p^2)*(81*sg-g^2));
+        end
     end
     
-    avg_RMSE = sum(RMSE)/o;
-    avg_CC   = sum(CC)/o;   
-    avg_bias = sum(bias)/o;
+    avg_RMSE = sum(RMSE)/pa;
+    avg_CC   = sum(CC)/pa;   
+    avg_bias = sum(bias)/pa;
 end
 
